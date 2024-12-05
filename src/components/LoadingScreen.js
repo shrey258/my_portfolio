@@ -1,62 +1,92 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const LoadingScreen = ({ isLoading }) => {
+const LoadingScreen = () => {
   return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      animate={{ opacity: isLoading ? 1 : 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 ${
-        isLoading ? '' : 'pointer-events-none'
-      }`}
-    >
+    <div className="fixed inset-0 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center z-50">
       <div className="relative">
-        <svg className="w-20 h-20" viewBox="0 0 100 100">
-          <motion.circle
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{
-              duration: 2,
-              ease: "easeInOut",
-              repeat: Infinity,
+        {/* Animated rings */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full border-2 border-primary/30"
+            style={{
+              width: `${100 + i * 30}px`,
+              height: `${100 + i * 30}px`,
+              border: `2px solid ${i === 1 ? 'var(--accent)' : 'var(--primary)'}`,
+              opacity: 0.3 - i * 0.1,
             }}
-            strokeWidth="8"
-            stroke="url(#gradient)"
-            strokeLinecap="round"
-            fill="none"
-            cx="50"
-            cy="50"
-            r="40"
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              delay: i * 0.2,
+              ease: "easeInOut",
+            }}
           />
-          <defs>
-            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="var(--color-primary)" />
-              <stop offset="100%" stopColor="var(--color-accent)" />
-            </linearGradient>
-          </defs>
-        </svg>
+        ))}
+
+        {/* Center pulse */}
         <motion.div
-          initial={{ scale: 1 }}
-          animate={{ scale: [1, 1.2, 1] }}
+          className="relative w-24 h-24"
+          animate={{ scale: [0.95, 1.05, 0.95] }}
           transition={{
             duration: 2,
-            ease: "easeInOut",
             repeat: Infinity,
+            ease: "easeInOut"
           }}
-          className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-xl"
-        />
+        >
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-accent opacity-30 blur-xl" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-accent opacity-20" />
+          
+          {/* Inner content */}
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            animate={{ rotate: 360 }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
+            <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-primary border-r-accent" />
+          </motion.div>
+        </motion.div>
+
+        {/* Loading text */}
+        <motion.div
+          className="absolute -bottom-16 left-1/2 transform -translate-x-1/2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.span 
+            className="block text-xl font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            Loading
+            <motion.span
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              ...
+            </motion.span>
+          </motion.span>
+        </motion.div>
       </div>
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="absolute mt-24 text-xl font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
-      >
-        Loading...
-      </motion.h2>
-    </motion.div>
+    </div>
   );
 };
 
